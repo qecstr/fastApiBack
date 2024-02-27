@@ -33,6 +33,7 @@ class Finances(BaseModel):
     comment: str
 
 
+
 def get_db():
     db = SessionLocal()
     try:
