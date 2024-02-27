@@ -27,7 +27,7 @@ app.add_middleware(
 )
 class Finances(BaseModel):
     date: datetime.date
-    operatrion_type: str
+    operation_type: str
     sum: float
     sender: str
     comment: str
@@ -46,7 +46,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 @app.post("/finances")
 async def create_finances(Finances: Finances, db: db_dependency):
-    db_Finances = Models.Finances(date=Finances.date, operation_type=Finances.operatrion_type, sum=Finances.sum,
+    db_Finances = Models.Finances(date=Finances.date, operation_type=Finances.operation_type, sum=Finances.sum,
                                   sender=Finances.sender,
                                   comment=Finances.comment)
     db.add(db_Finances)
