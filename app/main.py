@@ -66,3 +66,20 @@ async def get(id: int, db: db_dependency):
 async def getAll(db: db_dependency):
     query = db.query(Models.Finances).all()
     return query
+@app.post("/financeUpdate/{id}")
+async def update(Finances: Finances ,db :db_dependency,id:int ):
+
+    query = db.query(Models.Finances).filter(Models.Finances.id == id).first()
+    query.date=Finances.date
+    query.operation_type = Finances.operation_type
+    query.sum = Finances.sum
+    query.sender = Finances.sender
+    query.comment = Finances.comment
+    db.commit()
+    db.refresh(query)
+
+@app.delete("/financesDelete/{id}")
+async def delete(db: db_dependency,id:int ):
+    query = db.query(Models.Finances).filter(Models.Finances.id == id).first()
+    db.delete(query)
+    db.commit()
