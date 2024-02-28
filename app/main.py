@@ -8,19 +8,16 @@ from typing import Annotated
 from app.database import engine, SessionLocal
 from sqlalchemy.orm import Session
 import datetime
-
+from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 Models.Base.metadata.create_all(bind=engine)
 finances = sql.Table('Finances', sql.MetaData(), autoload_with=engine)
-origins = [
-    "http://localhost",
-    "http://localhost:3000",
-]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
