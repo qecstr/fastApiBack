@@ -9,7 +9,7 @@ from app.database import engine, SessionLocal
 from sqlalchemy.orm import Session
 import datetime
 
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 Models.Base.metadata.create_all(bind=engine)
