@@ -1,8 +1,12 @@
+import asyncio
+
 import sqlalchemy as sql
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, WebSocket
 from fastapi.openapi.models import Response
 
 from pydantic import BaseModel
+
+
 import app.Models as Models
 from typing import Annotated
 from app.database import engine, SessionLocal
@@ -86,3 +90,17 @@ async def delete(db: db_dependency,id:int ):
     query = db.query(Models.Finances).filter(Models.Finances.id == id).first()
     db.delete(query)
     db.commit()
+@app.get("/finances/chart-data")
+async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
+    await websocket.accept()
+    i = 2
+    while True:
+        i = i + 1
+        await asyncio.sleep(0.1)
+        array = [getById(i,db).date][getById(i,db)]
+        await websocket.send_json(array)
+
+
+def getById(id:int,db:Session):
+    query = db.query(Models.Finances).filter(Models.Finances.id == id).first()
+    return query
