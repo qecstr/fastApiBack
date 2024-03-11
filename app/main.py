@@ -234,7 +234,7 @@ manager = ConnectionManager()
 
 
 
-@app.get("/")
+@app.get("/html")
 async def get():
     return HTMLResponse(html)
 @app.websocket("/ws")
