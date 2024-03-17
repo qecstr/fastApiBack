@@ -97,121 +97,6 @@ async def delete(db: db_dependency,id:int ):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-html = """
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebSocket Chart Example</title>
-    <!-- Include Chart.js library -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <h1>WebSocket Chart Example</h1>
-    <!-- Create a canvas element for the chart -->
-    <canvas id="myChart" width="400" height="200"></canvas>
-
-    <script>
-        // Initialize WebSocket connection
-        const socket = new WebSocket("ws://localhost:8000/ws");
-        
-        // Create a Chart.js chart
-        const ctx = document.getElementById("myChart").getContext("2d");
-        const myChart = new Chart(ctx, {
-            type: "line",
-            data: {
-                datasets: [{
-                    label: "Finances",
-                    data: [],
-                    backgroundColor: "rgba(255, 99, 132, 0.2)",
-                    borderColor: "rgba(255, 99, 132, 1)",
-                    borderWidth: 1,
-                    fill: false
-                }]
-            },
-            options: {
-                scales: {
-                    xAxes: [{
-                        type: "time",
-                          // Start from the right side
-                        time: {
-                            unit: "second", // Adjust time unit as needed
-                            displayFormats: {
-                                second: "MMM D HH:mm:ss" // Format datetime as needed
-                            }
-                            
-                        }
-                    }],
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-        });
-        function generateTimestamp() {
-            return new Date().toISOString(); // Generate current timestamp in ISO format
-        }
-        // WebSocket event listener for incoming data
-        socket.addEventListener("message", function(event) {
-            const data = JSON.parse(event.data);
-            const timestamp = generateTimestamp();  // Assuming server sends timestamp
-            const value = data.sum; // Parse value as a double
-            console.log(timestamp);
-            console.log(value);
-            // Add data to the chart
-            myChart.data.datasets[0].data.unshift({ x: timestamp, y: value });
-
-            // Update the chart
-            myChart.update();
-            if (myChart.data.datasets[0].data.length > 10) {
-                myChart.data.datasets[0].data.shift();
-            }
-        });
-    </script>
-</body>
-</html>
-"""
-
-
-
-
 class ConnectionManager:
         def __init__(self):
             self.active_connections: list[WebSocket] = []
@@ -229,12 +114,6 @@ class ConnectionManager:
                 await connection.send_json({"date":timestamp ,"sum":finances.sum})
 
 manager = ConnectionManager()
-
-
-
-
-
-
 @app.websocket("/finances/ws")
 async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     await manager.connect(websocket)
