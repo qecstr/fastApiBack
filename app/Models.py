@@ -12,4 +12,9 @@ class Finances(Base):
     sum = Column(types.DOUBLE_PRECISION, index=True)
     sender = Column(types.TEXT, index=True)
     comment = Column(types.TEXT, index=True)
-
+class Employees(Base):
+    __tablename__ = 'Employees'
+    id = Column(Integer,primary_key=True,index=True)
+    name = Column(types.TEXT,index = True)
+    surname = Column(types.TEXT,index = True)
+    speciality = Column(types.TEXT,index=True)

@@ -9,7 +9,7 @@ from fastapi.openapi.models import Response
 
 from pydantic import BaseModel
 
-
+from app.routes import router
 import app.Models as Models
 from typing import Annotated
 from app.database import engine, SessionLocal
@@ -21,7 +21,7 @@ from starlette.middleware.cors import CORSMiddleware
 app = FastAPI()
 Models.Base.metadata.create_all(bind=engine)
 finances = sql.Table('Finances', sql.MetaData(), autoload_with=engine)
-
+app.include_router(router, prefix="", tags=[""])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -49,7 +49,7 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-@app.post("/finances")
+@app.post("/finances/create")
 async def create_finances(Finances: Finances, db: db_dependency):
     db_Finances = Models.Finances(date=Finances.date, operation_type=Finances.operation_type, sum=Finances.sum,
                                   sender=Finances.sender,
@@ -234,15 +234,13 @@ manager = ConnectionManager()
 
 
 
-@app.get("/html")
-async def get():
-    return HTMLResponse(html)
-@app.websocket("/ws")
+
+@app.websocket("/finances/ws")
 async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
     await manager.connect(websocket)
-    i=7
+    finances
     while True:
-        finances = getById(i,db)
+
         if finances is None:
             manager.disconnect(websocket)
             return
@@ -252,6 +250,3 @@ async def websocket_endpoint(websocket: WebSocket,db:db_dependency):
 
 
 
-def getById(id:int,db:Session):
-    query = db.query(Models.Finances).filter(Models.Finances.id == id).first()
-    return query

@@ -9,3 +9,8 @@ class Response(GenericModel, Generic[T]):
     status: str
     message: str
     result: Optional[T]
+
+class EmployeesJson(BaseModel):
+    name: str
+    surname: str
+    speciality: str
